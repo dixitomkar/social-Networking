@@ -1,18 +1,20 @@
 package socialnetworking.demo.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Tweet {
 
     private String username;
     private String tweetData;
-    private Date time;
+    private LocalDateTime time;
 
 
     public Tweet(String username, String tweetData) {
         this.username = username;
         this.tweetData = tweetData;
-        this.time = new Date();
+        this.time = LocalDateTime.now();
+
     }
 
     public String getUsername() {
@@ -40,11 +42,11 @@ public class Tweet {
         this.tweetData = tweetData;
     }
 
-    public Date getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 

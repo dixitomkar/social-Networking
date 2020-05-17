@@ -3,8 +3,9 @@ package socialnetworking.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import socialnetworking.demo.models.TimeLineMessage;
-import socialnetworking.demo.models.TimeLineMessages;
 import socialnetworking.demo.models.Tweet;
+import socialnetworking.demo.models.WallMessage;
+import socialnetworking.demo.models.WallMessageList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TimeLineGenerationService {
+public class WallService {
 
     @Autowired
     private TweetService tweetService;
@@ -20,13 +21,18 @@ public class TimeLineGenerationService {
     @Autowired
     private FollowersService followersService;
 
-    public TimeLineMessages getTimeLine(String username) {
+    public WallMessageList getWall(String username) {
 
-        List<TimeLineMessage> timeLineMessages = new ArrayList<>();
+        List<WallMessage> wallMessages = new ArrayList<>();
 
-        List<Tweet> tweets = tweetService.getTweetsForUser(username);
+        List<String> follows = followersService.getFollowersForUser(username);
+        List<Tweet> tweetsForUser = new ArrayList<>();
+        tweetsForUser.addAll(tweetService.getTweetsForUser(username));
 
-        for(Tweet tweet: tweets) {
+        for(String follow: follows)
+            tweetsForUser.addAll(tweetService.getTweetsForUser(follow));
+
+        for(Tweet tweet: tweetsForUser) {
             String message = tweet.getTweetData();
             LocalDateTime tweetTime = tweet.getTime();
             LocalDateTime now = LocalDateTime.now();
@@ -40,13 +46,13 @@ public class TimeLineGenerationService {
             else
                 tweetElapsedTime = duration.toMinutes() + " minutes ago";
 
-            TimeLineMessage timeLineMessage = new TimeLineMessage(message,tweetElapsedTime);
-            timeLineMessages.add(timeLineMessage);
+            WallMessage wallMessage = new WallMessage(message,tweetElapsedTime, tweet.getUsername());
+            wallMessages.add(wallMessage);
 
         }
 
-        TimeLineMessages timeLineMessagesList = new TimeLineMessages(timeLineMessages);
-        return timeLineMessagesList;
-
+        WallMessageList wallMessageList = new WallMessageList(wallMessages);
+        return wallMessageList;
     }
+
 }

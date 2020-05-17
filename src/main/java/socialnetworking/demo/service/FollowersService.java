@@ -18,7 +18,6 @@ public class FollowersService {
     }
 
     public List<String> getFollowersForUser(String username) {
-        //return followers.stream().filter(follower -> follower.getFollower().equals(username)).collect(Collectors.toList());
         List<String> follows = new ArrayList<>();
         for(Followers follower: this.followers) {
             if(follower.getFollower().equals(username))
